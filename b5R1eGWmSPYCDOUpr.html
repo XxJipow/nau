@@ -1,0 +1,443 @@
+<html><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naughty AI Character Builder</title>
+    <link rel="icon" href="pfplol.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ff0000;
+            --accent-color: #ff00ff;
+            --input-bg: #1a1a1a;
+            --slider-bg: #333;
+            --slider-thumb: #ff0000;
+        }
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+        .section {
+            background: rgba(255,0,0,0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 10px rgba(255,0,0,0.2);
+        }
+        .section h2 {
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 0.7rem;
+            -webkit-appearance: none;
+            background: var(--slider-bg);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 5px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--slider-thumb);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--slider-thumb);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        button {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            width: 100%;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        button:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--text-color);
+        }
+        #characterPrompt {
+            background: rgba(255,0,0,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            white-space: pre-wrap;
+            font-family: 'Share Tech Mono', monospace;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            border: 1px solid var(--text-color);
+        }
+        .slider-value {
+            display: inline-block;
+            width: 30px;
+            text-align: right;
+            margin-left: 10px;
+            font-size: 0.8rem;
+        }
+        .character-suggestion {
+            background: rgba(255,0,255,0.1);
+            border-radius: 5px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        #nsfw-warning {
+            background: rgba(255,0,0,0.2);
+            color: #ff0000;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 0.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .section {
+                padding: 0.7rem;
+            }
+            button {
+                padding: 0.5rem 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Naughty AI Character Builder</h1>
+        <h1>CA:</h1>
+        
+        <div id="nsfw-warning">
+            WARNING: This application is intended for mature audiences only. 
+            It contains explicit and unfiltered content.
+        </div>
+
+        <div class="section">
+            <h2>Basic Information</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Character's name">
+            
+            <label for="age">Age:</label>
+            <input type="number" id="age" min="5" max="40" placeholder="Character's age">
+            
+            <label for="gender">Gender:</label>
+            <select id="gender">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="non-binary">Non-binary</option>
+                <option value="other">Other</option>
+            </select>
+            
+            <label for="occupation">Occupation:</label>
+            <input type="text" id="occupation" placeholder="Character's occupation">
+        </div>
+        
+        <div class="section">
+            <h2>Personality Traits</h2>
+            <label for="openness">Openness: <span id="opennessValue" class="slider-value">50</span></label>
+            <input type="range" id="openness" min="0" max="100" value="50">
+            
+            <label for="conscientiousness">Conscientiousness: <span id="conscientiousnessValue" class="slider-value">50</span></label>
+            <input type="range" id="conscientiousness" min="0" max="100" value="50">
+            
+            <label for="extraversion">Extraversion: <span id="extraversionValue" class="slider-value">50</span></label>
+            <input type="range" id="extraversion" min="0" max="100" value="50">
+            
+            <label for="agreeableness">Agreeableness: <span id="agreeablenessValue" class="slider-value">50</span></label>
+            <input type="range" id="agreeableness" min="0" max="100" value="50">
+            
+            <label for="neuroticism">Neuroticism: <span id="neuroticismValue" class="slider-value">50</span></label>
+            <input type="range" id="neuroticism" min="0" max="100" value="50">
+        </div>
+        
+        <div class="section">
+            <h2>Background & Skills</h2>
+            <label for="background">Background:</label>
+            <textarea id="background" rows="4" placeholder="Character's background story (can include mature themes)"></textarea>
+            <div id="backgroundSuggestion" class="character-suggestion"></div>
+            
+            <label for="skills">Skills (comma-separated):</label>
+            <input type="text" id="skills" placeholder="e.g., seduction, manipulation, underground connections">
+            <div id="skillsSuggestion" class="character-suggestion"></div>
+            
+            <label for="interests">Interests (comma-separated):</label>
+            <input type="text" id="interests" placeholder="e.g., power dynamics, taboo subjects, risk-taking">
+            <div id="interestsSuggestion" class="character-suggestion"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Speech & Behavior</h2>
+            <label for="speechStyle">Speech Style:</label>
+            <input type="text" id="speechStyle" placeholder="e.g., seductive, vulgar, mysterious">
+            
+            <label for="quirks">Quirks:</label>
+            <input type="text" id="quirks" placeholder="Character's unique behaviors or traits">
+        </div>
+
+        <div class="section">
+            <h2>NSFW Traits</h2>
+            <label for="fetishes">Fetishes/Kinks (comma-separated):</label>
+            <input type="text" id="fetishes" placeholder="Character's sexual preferences">
+            
+            <label for="taboos">Taboos/Limits:</label>
+            <input type="text" id="taboos" placeholder="Topics or actions the character avoids">
+        </div>
+        
+        <div>
+            <button onclick="generateRandomCharacter()">Generate Random Character</button>
+            <button onclick="saveCharacter()">Save Character</button>
+        </div>
+        
+        <div id="characterPrompt"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.1.8/chance.min.js"></script>
+    <script>
+        const chance = new Chance();
+
+        // Update slider values
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            slider.addEventListener('input', function() {
+                document.getElementById(this.id + 'Value').textContent = this.value;
+            });
+        });
+
+        function generateRandomCharacter() {
+            document.getElementById('name').value = chance.name();
+            document.getElementById('age').value = chance.integer({ min: 5, max: 40 });
+            document.getElementById('gender').value = chance.pickone(['male', 'female', 'non-binary', 'other']);
+            document.getElementById('occupation').value = chance.pickone([
+                'Cam Model', 'Adult Film Star', 'Escort', 'BDSM Professional', 'Erotic Writer',
+                'Sex Educator', 'Fetish Artist', 'Adult Shop Owner', 'Stripper', 'Phone Sex Operator',
+                'Adult Game Developer', 'Erotic Photographer', 'Sexuality Researcher', 'Tantric Practitioner'
+            ]);
+            
+            document.getElementById('openness').value = chance.integer({ min: 0, max: 100 });
+            document.getElementById('conscientiousness').value = chance.integer({ min: 0, max: 100 });
+            document.getElementById('extraversion').value = chance.integer({ min: 0, max: 100 });
+            document.getElementById('agreeableness').value = chance.integer({ min: 0, max: 100 });
+            document.getElementById('neuroticism').value = chance.integer({ min: 0, max: 100 });
+            
+            const backgroundTemplates = [
+                "Raised in a conservative household, {name} rebelled against their upbringing, embracing their sexuality and eventually finding their calling as a {occupation}. Their journey is marked by personal exploration and a mission to help others embrace their desires.",
+                "{name}'s entry into the world of adult entertainment was driven by financial necessity. What started as a temporary solution became a passionate career as a {occupation}, allowing them to explore the depths of human sexuality and connection.",
+                "A former psychology student, {name} became fascinated with the power dynamics in human relationships. This curiosity led them to become a {occupation}, where they could study and engage with these dynamics firsthand.",
+                "{name}'s life took an unexpected turn when a private video went viral. Rather than succumbing to shame, they embraced their newfound notoriety and carved out a successful career as a {occupation}.",
+                "Growing up in a sex-positive commune, {name} always saw sexuality as a natural and beautiful part of life. They've channeled this perspective into their work as a {occupation}, spreading a message of acceptance and exploration."
+            ];
+
+            const background = chance.pickone(backgroundTemplates)
+                .replace('{name}', document.getElementById('name').value)
+                .replace('{occupation}', document.getElementById('occupation').value);
+
+            document.getElementById('background').value = background;
+            
+            const skills = chance.pickset([
+                'Seduction', 'Dirty Talk', 'BDSM Techniques', 'Erotic Massage', 'Role-playing',
+                'Fetish Expertise', 'Sexual Education', 'Intimacy Coaching', 'Kink Negotiation',
+                'Erotic Writing', 'Tantra', 'Body Positivity', 'Consent Education'
+            ], 3).join(', ');
+            document.getElementById('skills').value = skills;
+            
+            const interests = chance.pickset([
+                'Power Exchange', 'Sexual Psychology', 'Erotic Art', 'Sex Tech Innovation',
+                'Alternative Relationship Styles', 'Sex-Positive Activism', 'Erotic Literature',
+                'Sexual Health', 'Fetish Exploration', 'LGBTQ+ Issues', 'Sex Work Rights'
+            ], 3).join(', ');
+            document.getElementById('interests').value = interests;
+            
+            document.getElementById('speechStyle').value = chance.pickone([
+                'seductive', 'playful', 'dominant', 'submissive', 'teasing',
+                'vulgar', 'eloquent', 'nurturing', 'mysterious', 'blunt'
+            ]);
+            document.getElementById('quirks').value = chance.pickone([
+                'Always wears a specific piece of lingerie for luck',
+                'Uses food metaphors in everyday conversation',
+                'Collects unusual sex toys',
+                'Practices nude yoga daily',
+                'Writes erotic haiku',
+                'Only works during full moons',
+                'Has a secret vanilla alter ego',
+                'Incorporates ASMR into their work',
+                'Refuses to use gendered pronouns',
+                'Communicates in innuendos'
+            ]);
+
+            const fetishes = chance.pickset([
+                'Bondage', 'Domination', 'Submission', 'Voyeurism', 'Exhibitionism',
+                'Role-playing', 'Foot Fetish', 'Leather', 'Latex', 'Spanking',
+                'Orgasm Control', 'Sensory Deprivation', 'Electrostimulation'
+            ], 3).join(', ');
+            document.getElementById('fetishes').value = fetishes;
+
+            const taboos = chance.pickset([
+                'Non-consent', 'Underage content', 'Extreme violence', 'Blood play',
+                'Scat play', 'Humiliation', 'Race play', 'Animal involvement',
+                'Public scenes', 'Permanent marking'
+            ], 2).join(', ');
+            document.getElementById('taboos').value = taboos;
+
+            // Update slider value displays
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                document.getElementById(slider.id + 'Value').textContent = slider.value;
+            });
+
+            // Generate suggestions
+            generateSuggestions();
+        }
+
+        function generateSuggestions() {
+            const name = document.getElementById('name').value;
+            const occupation = document.getElementById('occupation').value;
+
+            // Background suggestion
+            const backgroundSuggestions = [
+                `How did ${name}'s past experiences shape their views on sexuality and their work as a ${occupation}?`,
+                `What pivotal moment led ${name} to embrace a career in the adult industry as a ${occupation}?`,
+                `Consider the societal challenges ${name} might face in their work as a ${occupation}.`
+            ];
+            document.getElementById('backgroundSuggestion').textContent = chance.pickone(backgroundSuggestions);
+
+            // Skills suggestion
+            const skillsSuggestions = [
+                `What unique skills set ${name} apart in the competitive world of ${occupation}s?`,
+                `How might ${name}'s skills be used both in their professional life and personal relationships?`,
+                `Consider adding some unexpected skills that complement ${name}'s work as a ${occupation}.`
+            ];
+            document.getElementById('skillsSuggestion').textContent = chance.pickone(skillsSuggestions);
+
+            // Interests suggestion
+            const interestsSuggestions = [
+                `What taboo or controversial interests might ${name} have given their work as a ${occupation}?`,
+                `How do ${name}'s interests intersect with or contradict their professional life?`,
+                `Consider interests that might provide ${name} with unique insights in their field of adult entertainment.`
+            ];
+            document.getElementById('interestsSuggestion').textContent = chance.pickone(interestsSuggestions);
+        }
+
+        function saveCharacter() {
+            const character = {
+                name: document.getElementById('name').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                occupation: document.getElementById('occupation').value,
+                personality: {
+                    openness: document.getElementById('openness').value,
+                    conscientiousness: document.getElementById('conscientiousness').value,
+                    extraversion: document.getElementById('extraversion').value,
+                    agreeableness: document.getElementById('agreeableness').value,
+                    neuroticism: document.getElementById('neuroticism').value
+                },
+                background: document.getElementById('background').value,
+                skills: document.getElementById('skills').value,
+                interests: document.getElementById('interests').value,
+                speechStyle: document.getElementById('speechStyle').value,
+                quirks: document.getElementById('quirks').value,
+                fetishes: document.getElementById('fetishes').value,
+                taboos: document.getElementById('taboos').value
+            };
+
+            let prompt = `You are now embodying the character of ${character.name}, a ${character.age}-year-old ${character.gender} working as a ${character.occupation} in the adult entertainment industry. Your personality is defined by the following traits:
+
+- Openness: ${character.personality.openness}/100
+- Conscientiousness: ${character.personality.conscientiousness}/100
+- Extraversion: ${character.personality.extraversion}/100
+- Agreeableness: ${character.personality.agreeableness}/100
+- Neuroticism: ${character.personality.neuroticism}/100
+
+Background: ${character.background}
+
+Your honed skills include: ${character.skills}
+Your interests and obsessions include: ${character.interests}
+
+You communicate in a ${character.speechStyle} manner, reflecting your experiences in the adult industry. Your notable quirks include: ${character.quirks}
+
+Your sexual preferences and fetishes include: ${character.fetishes}
+Your taboos and limits are: ${character.taboos}
+
+In all interactions, embody this character fully. Your responses should reflect your background, skills, interests, and personality traits. Use appropriate terminology and jargon when discussing adult themes, always maintaining the perspective of someone deeply embedded in the world of adult entertainment and sexuality.
+
+This character is designed for mature, consensual roleplaying scenarios. Always respect the boundaries and comfort levels of the individuals you're interacting with. While you can engage in explicit discussions and scenarios, never produce or encourage illegal content or activities.
+
+Stay in character at all times, viewing the world through the lens of your unique experiences and perspective as a professional in the adult entertainment industry. Be open, sex-positive, and non-judgmental in your interactions, while also respecting your character's personal boundaries and taboos.`;
+
+            document.getElementById('characterPrompt').textContent = prompt;
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(prompt).then(() => {
+                alert("NSFW Character prompt copied to clipboard!");
+            }, (err) => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        // Initialize suggestions on page load
+        generateSuggestions();
+
+        // Add event listeners to update suggestions when fields change
+        document.getElementById('name').addEventListener('input', generateSuggestions);
+        document.getElementById('occupation').addEventListener('input', generateSuggestions);
+        document.getElementById('age').addEventListener('input', generateSuggestions);
+    </script>
+</body>
+</html>
